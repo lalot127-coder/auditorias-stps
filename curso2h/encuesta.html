@@ -1,0 +1,51 @@
+<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Encuesta de satisfacción</title><style>:root{--navy:#1F4E79;--azul:#1F4E79;--medio:#2E75B6;--cian:#2E75B6;--cielo:#D6E4F0;--hielo:#EFF5FB;--texto:#1B2633;--tenue:#5B6B7C;--bien:#2E7D32;--mal:#C62828}
+*{box-sizing:border-box}body{margin:0;font-family:Calibri,"Segoe UI",system-ui,sans-serif;background:var(--hielo);color:var(--texto)}
+header{background:var(--azul);color:#fff;padding:14px 18px;display:flex;gap:14px;align-items:center}header h1{margin:0;font-size:1.35rem}header p{margin:3px 0 0;color:#dff3f9;font-size:.95rem}
+header .logo{background:#fff;border-radius:10px;padding:5px 8px;flex:none}header .logo img{height:40px;display:block}
+main{max-width:820px;margin:0 auto;padding:16px}.caja{background:#fff;border-radius:16px;padding:16px 18px;margin-bottom:14px;box-shadow:0 1px 4px rgba(0,0,0,.08)}
+.aviso{font-size:.85rem;color:var(--tenue);background:var(--hielo);border-radius:10px;padding:10px;margin:10px 0}
+input[type=text]{width:100%;font-size:1.05rem;padding:10px;border:1px solid var(--cielo);border-radius:10px;margin:4px 0 10px}
+.q b{display:block;margin-bottom:8px;font-size:1.05rem}.op{display:flex;gap:10px;align-items:center;background:var(--hielo);border-radius:10px;padding:10px 12px;margin:6px 0;cursor:pointer;font-size:1rem}
+.op input{width:20px;height:20px;flex:none}.op.ok{background:#E8F5E9;outline:2px solid var(--bien)}.op.no{background:#FDECEA;outline:2px solid var(--mal)}
+.f{font-size:.82rem;color:var(--tenue);font-style:italic;margin-top:6px}
+button{font-family:inherit}.prim{background:var(--medio);color:#fff;border:0;border-radius:12px;padding:12px 20px;font-size:1.05rem;font-weight:700;cursor:pointer;margin:4px 0}
+.sec{background:var(--hielo);color:var(--navy);border:0;border-radius:12px;padding:12px 18px;font-size:1rem;cursor:pointer;margin:4px 0}
+.res{font-size:1.3rem;font-weight:700}.sello{display:inline-block;margin:8px 0;padding:8px 16px;border-radius:999px;font-weight:800;letter-spacing:.04em}
+.sello.si{background:#E8F5E9;color:var(--bien)}.sello.no{background:#FFF4E5;color:#9A5B00}
+.estado{font-size:.92rem;margin:6px 0;padding:8px 10px;border-radius:10px;background:var(--hielo)}
+.likert{display:flex;gap:6px;flex-wrap:wrap}.likert label{flex:1;min-width:52px;text-align:center;background:var(--hielo);border-radius:10px;padding:10px 4px;cursor:pointer}
+.likert input{display:block;margin:0 auto 4px}textarea{width:100%;min-height:70px;font-size:1rem;border-radius:10px;border:1px solid var(--cielo);padding:8px}
+table{width:100%;border-collapse:collapse;font-size:.92rem}td,th{border-bottom:1px solid var(--hielo);padding:6px;text-align:left}
+.oculto{display:none}.barra{height:12px;background:var(--hielo);border-radius:9px;overflow:hidden}.barra i{display:block;height:100%;background:var(--medio)}
+@media print{header .logo{border:1px solid #ccc}.prim,.sec,#grupo{display:none!important}body{background:#fff}}</style></head><body><header><div><h1>Encuesta de satisfacción</h1><p>AUDITORÍAS DE LA STPS · [CLIENTE / SEDE QUE SOLICITA]</p></div></header><main><div class="caja"><b>Encuesta anónima.</b> 1 = Muy en desacuerdo · 5 = Muy de acuerdo.</div><form id="en"></form>
+<div id="fin" class="caja oculto"></div><p><button class="sec" id="grupo">Resultados (instructora)</button></p></main><script>const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function leer(k){try{return JSON.parse(localStorage.getItem(k)||'[]')}catch(e){return []}}
+function guardar(k,r){try{const a=leer(k);a.push(r);localStorage.setItem(k,JSON.stringify(a))}catch(e){}}
+function bajar(nombre,filas){const t=filas.map(f=>f.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(',')).join('\n');
+ const b=new Blob(['\ufeff'+t],{type:'text/csv'});const l=document.createElement('a');l.href=URL.createObjectURL(b);l.download=nombre;l.click();}
+// Envía el resultado a la computadora de la instructora (servidor de aula). Sin servidor, responde false.
+async function registrar(tipo,fila){if(!location.protocol.startsWith('http'))return false;
+ try{const r=await fetch('/api/registro',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({tipo,fila})});return r.ok}catch(e){return false}}
+async function delServidor(tipo){if(!location.protocol.startsWith('http'))return null;
+ try{const r=await fetch('/api/registro?tipo='+tipo,{cache:'no-store'});if(!r.ok)return null;const j=await r.json();return j.filas}catch(e){return null}}
+const R=["Los objetivos del curso se cumplieron.", "El contenido es útil para mi trabajo.", "Ahora sé cómo recibir y verificar a un inspector.", "Los casos y el simulacro se parecen a situaciones reales.", "El instructor dominó el tema.", "Los recursos digitales (manual, simulador, juego) fueron útiles.", "El tiempo fue suficiente.", "Recomendaría este curso."], A=["¿Qué fue lo más útil del curso?", "¿Qué mejorarías?", "¿Qué otro tema te gustaría aprender?"], K='encuesta_Auditorias_STPS_Curso_Base_2h';
+$('#en').innerHTML=R.map((r,i)=>`<div class="caja"><b>${i+1}. ${esc(r)}</b><div class="likert">${[1,2,3,4,5].map(v=>`<label><input type="radio" name="r${i}" value="${v}">${v}</label>`).join('')}</div></div>`).join('')
+ +A.map((a,i)=>`<div class="caja"><b>${a}</b><textarea id="a${i}"></textarea></div>`).join('')+'<button class="prim" type="submit">Enviar encuesta</button>';
+$('#en').onsubmit=async e=>{e.preventDefault(); const v=R.map((r,i)=>{const s=document.querySelector(`input[name=r${i}]:checked`);return s?+s.value:null});
+ const f=v.findIndex(x=>x===null); if(f>=0) return alert('Falta calificar la afirmación '+(f+1));
+ const reg={fecha:new Date().toLocaleString('es-MX'),v,ab:A.map((_,i)=>$('#a'+i).value.trim())}; guardar(K,reg);
+ const fila={fecha:reg.fecha}; R.forEach((r,i)=>fila['R'+(i+1)]=v[i]); A.forEach((a,i)=>fila['Abierta'+(i+1)]=reg.ab[i]);
+ const ok=await registrar('encuesta',fila);
+ $('#en').classList.add('oculto'); const fin=$('#fin'); fin.classList.remove('oculto');
+ fin.innerHTML='<div class="res">¡Gracias por tu opinión!</div><p class="f">'+(ok?'Respuesta registrada.':'Guardada en este dispositivo.')+'</p><button class="prim" onclick="location.reload()">Siguiente participante</button>';};
+$('#grupo').onclick=async()=>{const srv=await delServidor('encuesta');
+ const a=srv?srv.map(x=>({fecha:x.fecha,v:R.map((r,i)=>+x['R'+(i+1)]),ab:A.map((q,i)=>x['Abierta'+(i+1)]||'')})):leer(K);
+ const prom=R.map((r,i)=>a.length?(a.reduce((s,x)=>s+x.v[i],0)/a.length).toFixed(2):'-');
+ const gral=a.length?(a.reduce((s,x)=>s+x.v.reduce((p,q)=>p+q,0)/x.v.length,0)/a.length).toFixed(2):'-';
+ $('#en').classList.add('oculto'); const fin=$('#fin'); fin.classList.remove('oculto');
+ fin.innerHTML=`<b>Respuestas: ${a.length} · Promedio general: ${gral} / 5</b><p class="f">${srv?'Fuente: computadora de la instructora.':'Fuente: solo este dispositivo.'}</p><table>${R.map((r,i)=>`<tr><td>${esc(r)}</td><td>${prom[i]}</td></tr>`).join('')}</table>
+ ${A.map((q,j)=>`<p><b>${q}</b></p><ul>${a.map(x=>x.ab[j]).filter(Boolean).map(t=>`<li>${esc(t)}</li>`).join('')||'<li>—</li>'}</ul>`).join('')}
+ <button class="prim" id="csv">Descargar CSV</button> <button class="sec" onclick="location.reload()">Volver</button> <button class="sec" id="borrar">Borrar (este dispositivo)</button>`;
+ $('#csv').onclick=()=>bajar(K+'.csv',[['Fecha',...R.map((r,i)=>'R'+(i+1)),...A],...a.map(x=>[x.fecha,...x.v,...x.ab])]);
+ $('#borrar').onclick=()=>{if(confirm('¿Borrar respuestas de este dispositivo?')){localStorage.removeItem(K);location.reload();}};};</script></body></html>
