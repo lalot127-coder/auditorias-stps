@@ -67,7 +67,27 @@
       return s0.apply(this, arguments);
     };
   } catch (e) { }
-  window.EnviarRes = { ofrecer, abrir, texto };
+  // 3) Navegación de salida (12/10/2026): en juegos y páginas sin barra propia aparece «⬅ Regresar · 🏙️ Campus · 🚪 Salir».
+  //    El campus abre cada puerta con ?volver=<campus/index.html?mundo=área>; sin ese dato regresa con el historial
+  //    o al campus publicado. No se muestra en páginas que ya tienen su barra (sub-mundos con motor.js, aula, cafetería).
+  const CAMPUS = 'https://lalot127-coder.github.io/campus-sst/index.html';
+  function navegacion() {
+    if (document.getElementById('barra') || document.getElementById('auAtras') || document.getElementById('navSalida') || window.SIN_NAV_SALIDA) return;
+    let volver = null; try { volver = new URLSearchParams(location.search).get('volver'); if (volver) sessionStorage.setItem('nav_volver_' + location.pathname, volver); else volver = sessionStorage.getItem('nav_volver_' + location.pathname); } catch (e) { }
+    const base = volver ? volver.split('?')[0] : (location.protocol === 'file:' ? null : CAMPUS);
+    const ir = q => { location.href = base ? base + q : CAMPUS + q; };
+    document.head.insertAdjacentHTML('beforeend', `<style id="navCss">#navSalida{position:fixed;top:calc(8px + env(safe-area-inset-top));right:8px;z-index:89;display:flex;gap:6px;font:700 .9rem Calibri,"Segoe UI",sans-serif}
+#navSalida button{border:0;border-radius:999px;padding:8px 12px;background:rgba(14,58,107,.92);color:#fff;cursor:pointer;box-shadow:0 3px 12px rgba(0,0,0,.25);font:inherit}
+#navSalida .s{background:#C62828}@media (max-width:560px){#navSalida .t{display:none}#navSalida button{padding:8px 10px}}@media print{#navSalida{display:none}}</style>`);
+    const d = document.createElement('div'); d.id = 'navSalida';
+    d.innerHTML = '<button id="navReg" title="Regresar al edificio o al curso">⬅<span class="t"> Regresar</span></button><button id="navCam" title="Ir a la plaza del campus">🏙️<span class="t"> Campus</span></button><button class="s" id="navSal" title="Salir a la pantalla de inicio">🚪<span class="t"> Salir</span></button>';
+    document.body.appendChild(d);
+    d.querySelector('#navReg').onclick = () => { if (volver) location.href = volver; else if (history.length > 1) history.back(); else ir('?plaza'); };
+    d.querySelector('#navCam').onclick = () => ir('?plaza');
+    d.querySelector('#navSal').onclick = () => ir('?salir');
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', navegacion); else setTimeout(navegacion, 0);
+  window.EnviarRes = { ofrecer, abrir, texto, navegacion };
 })();
 </script><!--/ENVIAR_RESULTADOS--><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Examen diagnóstico</title><style>:root{--navy:#1F4E79;--azul:#1F4E79;--medio:#2E75B6;--cian:#2E75B6;--cielo:#D6E4F0;--hielo:#EFF5FB;--texto:#1B2633;--tenue:#5B6B7C;--bien:#2E7D32;--mal:#C62828}
 *{box-sizing:border-box}body{margin:0;font-family:Calibri,"Segoe UI",system-ui,sans-serif;background:var(--hielo);color:var(--texto)}
@@ -91,7 +111,7 @@ table{width:100%;border-collapse:collapse;font-size:.92rem}td,th{border-bottom:1
 @media print{header .logo{border:1px solid #ccc}.prim,.sec,#grupo{display:none!important}body{background:#fff}}</style></head><body><header><div><h1>Examen diagnóstico</h1><p>AUDITORÍAS DE LA STPS · [CLIENTE / SEDE QUE SOLICITA] · [dd/mm/aaaa]</p></div></header><main><div class="caja" id="ini"><b>Antes de empezar</b>
 <input type="text" id="nom" placeholder="Nombre completo (como debe salir en tu constancia)" autocomplete="name">
 <input type="text" id="pue" placeholder="Puesto / área">
-<div class="aviso">AVISO DE PRIVACIDAD SIMPLIFICADO. Carlos Eduardo Roa Sánchez (instructor, especialista en Salud Ocupacional y Derecho Laboral), con domicilio en [PENDIENTE: domicilio del responsable — obligatorio, LFPDPPP art. 15 fr. I], es responsable del tratamiento de tus datos personales (nombre, puesto, área, firma y resultados de evaluaciones) que se usarán para registrar tu asistencia, evaluar tu aprendizaje, emitir tu constancia de participación del curso &quot;Auditorías de la STPS: prepárate para una inspección real&quot;, así como para entregar la carpeta de evidencias a [CLIENTE / SEDE QUE SOLICITA]. De forma adicional, y solo si no te opones, se usarán fotografías grupales para difusión de la capacitación; puedes negarte escribiendo a c.roa@amisimx.org. No se recaban datos sensibles. Consulta el aviso integral con la persona instructora o solicítalo en c.roa@amisimx.org.</div>
+<div class="aviso">AVISO DE PRIVACIDAD SIMPLIFICADO. Carlos Eduardo Roa Sánchez (instructor, especialista en Salud Ocupacional y Derecho Laboral), con domicilio en Andador Esperanza 113, Fraccionamiento Hogares Ferrocarrileros 2, Apizaco, Tlaxcala, C.P. 90329, es responsable del tratamiento de tus datos personales (nombre, puesto, área, firma y resultados de evaluaciones) que se usarán para registrar tu asistencia, evaluar tu aprendizaje, emitir tu constancia de participación del curso &quot;Auditorías de la STPS: prepárate para una inspección real&quot;, así como para entregar la carpeta de evidencias a [CLIENTE / SEDE QUE SOLICITA]. De forma adicional, y solo si no te opones, se usarán fotografías grupales para difusión de la capacitación; puedes negarte por escrito dirigido a el área responsable de los datos personales, en Andador Esperanza 113, Fraccionamiento Hogares Ferrocarrileros 2, Apizaco, Tlaxcala, C.P. 90329. No se recaban datos sensibles. Consulta el aviso integral con la persona instructora.</div>
 <label><input type="checkbox" id="acepto"> Leí el aviso de privacidad</label><br><br>
 <button class="prim" id="go">Comenzar (10 preguntas)</button> <button class="sec" id="grupo">Resultados del grupo (instructora)</button></div>
 <div id="fin" class="caja oculto"></div><form id="ex" class="oculto"></form></main><script>const $=s=>document.querySelector(s);
