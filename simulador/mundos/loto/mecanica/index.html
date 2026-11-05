@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<title>Simulador · Celda 3: Mecánico y energía almacenada</title>
+<script type="importmap">{"imports":{"three":"../../../motor/vendor/three/build/three.module.js","three/addons/":"../../../motor/vendor/three/examples/jsm/"}}</script>
+<script src="../../../motor/motor.js"></script>
+<script src="../../riesgo/comun.js"></script>
+<script src="../../construccion/comun.js"></script>
+<script src="../comun.js"></script>
+</head>
+<body>
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { Kit3D } from '../../../motor/kit3d.js';
+import { Props } from '../../../motor/props.js';
+
+// Celda 3 del Edificio LOTO: movimiento inesperado y energía almacenada mecánica.
+// La lección: cortar la energía no detiene lo que ya se está moviendo, no baja lo que está arriba y no destensa
+// lo que está en tensión. Aquí el aislamiento eléctrico es solo el principio.
+// FUNDAMENTO NORMATIVO VERIFICADO (22/10/2026) contra el DOF: ver la matriz del curso en
+// 03_cursos/BASE_loto_bloqueo_etiquetado_8h/01_diseno/MATRIZ_NORMATIVA_LOTO.md
+const { N04, PROC, BP, FIC, tablero, equipo, volante, cargaElevada, candado, tarjeta, pasoTocar, conTrampas,
+  trampaIntervenir, mesaDispositivos, estacion, aPie, setModo, guiar, pasosLiberacion, senalesTablero, senalesConsultables, F } = window.LOTO;
+const { nave, trabajador, marcador } = window.Alturas;
+const { decidir, encuentra, intro } = window.Riesgo;
+
+const W = MotorSim.crearMundo(THREE, OrbitControls, { titulo: 'Celda 3: Mecánico y energía almacenada', icono: '⚙️',
+  clave: 'loto_mecanica', criterio: { pct: 80, sinCriticos: true }, fondo: 0xDDE3E8,
+  vistas: [[[0.4, 3.0, 6.0], [0, 1.4, -1.2]], [[-3.4, 2.0, 1.4], [-1.2, 1.2, -1.8]], [[3.6, 2.2, 1.2], [1.2, 1.4, -1.6]]] });
+LOTO.init3D(W, { Kit3D, Props });   // modelos .glb CC0 + props propios; si fallan quedan las primitivas
+const { scene, caja, cil, letrero } = W; W.controls.maxDistance = 14;
+const N = nave(W, { alto: 6, ancho: 13, fondo: 11, rotulo: 'LÍNEA DE TRANSPORTE · MANTENIMIENTO INDUSTRIAL DEL CENTRO [FICTICIO]' });
+W.activarXR({ inicio: [0, 2.4], piso: N.piso, entorno: N.entorno });
+
+// --------------------------------------------------------------- escena
+const EQ = equipo(W, { x: 0.2, z: -1.9, rotulo: 'TRANSPORTADOR T-04' });
+const TB = tablero(W, { x: -3.0, z: -2.4, ry: 0.4, rotulo: 'TABLERO TB-9' });
+const VO = volante(W, { x: 1.55, y: 1.3, z: -1.9, r: 0.38 });
+const rotV = letrero('VOLANTE DE INERCIA', 0.6, 0.11, '#B45309'); rotV.position.set(1.55, 1.95, -1.9); scene.add(rotV);
+const CG = cargaElevada(W, { x: -1.3, z: -0.9, y: 1.9 });
+caja(0.14, 2.1, 0.14, 0x455A64, -1.3, 1.05, -1.25);                        // columna del mecanismo
+const rotCG = letrero('CARGA ELEVADA', 0.5, 0.11, '#B45309'); rotCG.position.set(-1.3, 2.25, -0.9); scene.add(rotCG);
+// resorte de retorno en tensión
+const RS = new THREE.Group(); RS.position.set(2.7, 0.85, -0.7); scene.add(RS);
+const rsBase = caja(0.2, 0.12, 0.2, 0x37474F, 0, -0.2, 0, RS);
+const rsEspiras = [];
+for (let i = 0; i < 7; i++) { const e = new THREE.Mesh(new THREE.TorusGeometry(0.075, 0.016, 6, 18), W.M(0x9E9E9E));
+  e.rotation.x = Math.PI / 2; e.position.y = -0.1 + i * 0.045; RS.add(e); rsEspiras.push(e); }
+W.tocable(RS, 'resorte', 0.6);
+const rotRS = letrero('RESORTE EN TENSIÓN', 0.55, 0.11, '#B45309'); rotRS.position.set(2.7, 1.3, -0.7); scene.add(rotRS);
+// señal de piso: distractor
+const SE = caja(0.5, 0.004, 0.5, 0xF2C94C, -3.6, 0.004, 0.8);
+// compañero
+const TR = trabajador(W, { x: 3.1, z: 1.2, ry: -2.4, arnes: false, ropa: 0x455A64 });
+W.tocable(TR.g, 'companero', 1.0);
+
+const MESA = mesaDispositivos(W, { x: -1.0, z: 1.8 });
+estacion(W, { x: -4.6, z: -7.8 });   // tablero de pared con candados, pinza multibloqueo y etiquetas
+const SEN = senalesTablero(W, { x: TB.g.position.x, y: 1.95, z: TB.g.position.z + 0.2, ry: 0.4, volts: 'PARTES MÓVILES' });
+
+// Recorrido a pie (anexo §5 y §11): toca el piso para caminar; al tocar algo lejano el avatar va hasta ahí
+// antes de inspeccionarlo. Habilita además el botón 🧍 de vista a la altura de los ojos.
+aPie(W, N, { obstaculos: [EQ.g, TB.g, VO.g, RS, TR.g, MESA.tapa] });
+const CAND = candado(W, { x: MESA.x - 0.3, y: MESA.y, z: MESA.z });
+const TARJ = tarjeta(W, { x: MESA.x, y: MESA.y + 0.08, z: MESA.z });
+
+const MK = {
+  inercia: marcador(W, { x: 1.55, y: 2.25, z: -1.9, tipo: 'm_inercia', icono: '🌀', etiqueta: 'Volante: sigue girando por inercia', escala: 0.8, mira: [0.4, 3.0, 6.0] }),
+  gravedad: marcador(W, { x: -1.3, y: 2.55, z: -0.9, tipo: 'm_gravedad', icono: '⬇️', etiqueta: 'Carga elevada: puede caer', escala: 0.8, mira: [0.4, 3.0, 6.0] }),
+  resorte: marcador(W, { x: 2.7, y: 1.6, z: -0.7, tipo: 'm_resorte', icono: '🪤', etiqueta: 'Resorte en tensión: puede soltarse de golpe', escala: 0.8, mira: [0.4, 3.0, 6.0] }),
+  electrica: marcador(W, { x: -3.0, y: 2.1, z: -2.2, tipo: 'm_electrica', icono: '⚡', etiqueta: 'Alimentación eléctrica (TB-9)', escala: 0.8, mira: [0.4, 3.0, 6.0] }),
+  senal: marcador(W, { x: -3.6, y: 0.9, z: 0.8, tipo: 'm_senal', icono: '🚸', etiqueta: 'Señal de piso: no es una energía', escala: 0.8, mira: [0.4, 3.0, 6.0] }),
+};
+
+const TRAMPA = trampaIntervenir(W);
+const trampaVolante = { tipo: 'volante', critico: true,
+  txt: 'Te acercaste al volante mientras seguía girando. La energía eléctrica ya estaba cortada y aun así te habría alcanzado.', f: N04 };
+const trampaCarga = { tipo: 'carga', critico: true,
+  txt: 'Te metiste debajo de la carga elevada sin bajarla ni apuntalarla. Si el mecanismo cede, cae encima.', f: N04 };
+
+// --------------------------------------------------------------- pasos
+const pasoFuentes = encuentra(W, {
+  titulo: 'Identifica los peligros de movimiento', texto: 'Toca cada energía que pueda producir un movimiento inesperado.',
+  fuente: F.identificar,
+  buenas: [
+    { tipo: 'm_electrica', nombre: 'Alimentación eléctrica', fb: 'Se aísla en el tablero TB-9, pero no basta.', f: N04, obj: MK.electrica },
+    { tipo: 'm_inercia', nombre: 'Inercia del volante', fb: 'Sigue girando después de cortar la energía.', f: N04, obj: MK.inercia },
+    { tipo: 'm_gravedad', nombre: 'Carga elevada', fb: 'La gravedad no se corta con un interruptor.', f: N04, obj: MK.gravedad },
+    { tipo: 'm_resorte', nombre: 'Resorte en tensión', fb: 'Guarda energía y puede soltarse de golpe.', f: N04, obj: MK.resorte },
+  ],
+  malas: [{ tipo: 'm_senal', nombre: 'Señal de piso', fb: 'Es señalización, no una fuente de energía.', f: BP, obj: MK.senal }],
+  alTerminar: () => W.siguiente() });
+pasoFuentes.iniciar = () => guiar(W, Object.values(MK).map(m => m.marco));
+conTrampas(W, pasoFuentes, [TRAMPA, trampaVolante, trampaCarga]);
+
+const pasoAvisar = pasoTocar(W, { titulo: 'Avisa al personal afectado', texto: 'Avisa a quien opera el transportador.',
+  fuente: F.notificar, tipo: 'companero', resaltar: [TR.torso], trampas: [TRAMPA, trampaVolante, trampaCarga],
+  alTocar: () => { W.globo('Enterado', TR.g, 2200, 1.9); W.bien('Personal afectado avisado.', PROC); W.siguiente(); } });
+
+// EPP adecuado AL RIESGO de esta celda: atrapamiento por partes móviles. Aquí los guantes holgados ESTORBAN.
+const pasoEPP = { titulo: 'Ponte el equipo de protección', texto: 'Vas a trabajar junto a partes que pueden moverse.', fuente: F.epp, puntos: 10,
+  iniciar() { guiar(W, []);
+    decidir(W, '🥽 ¿Qué equipo de protección corresponde a ESTE riesgo?', [
+      { t: 'Gafas, calzado de seguridad, ropa ceñida y sin guantes holgados ni cadenas junto a partes móviles', ok: true, fb: 'Cerca de transmisiones, lo suelto es lo que atrapa.', f: F.epp },
+      { t: 'Guantes gruesos de carnaza para sujetar mejor el volante', ok: false, crit: true, fb: 'Un guante holgado junto a una parte giratoria arrastra la mano.', f: F.epp },
+      { t: 'Ninguno: el equipo ya está bloqueado', ok: false, fb: 'El bloqueo no quita la inercia ni la carga suspendida que todavía hay que controlar.', f: F.epp },
+    ], () => W.siguiente()); } };
+
+const pasoParo = pasoTocar(W, { titulo: 'Paro controlado', texto: 'Para el transportador con el botón de paro.',
+  fuente: F.paro, tipo: 'paro', resaltar: [EQ.paro], trampas: [TRAMPA, trampaVolante, trampaCarga],
+  alTocar: () => { W.bien('Transportador detenido.', PROC); W.siguiente(); } });
+
+const pasoAislar = pasoTocar(W, { titulo: 'Aísla la energía eléctrica', texto: 'Abre el interruptor del tablero TB-9.',
+  fuente: F.aislar, tipo: 'palanca', resaltar: [TB.mango], trampas: [TRAMPA, trampaVolante, trampaCarga],
+  alTocar: async () => { await TB.abrir(); W.bien('Interruptor abierto. Ojo: el volante sigue girando.', N04); W.siguiente(); } });
+
+const pasoBloquear = pasoTocar(W, { titulo: 'Bloquea con tu candado', texto: 'Coloca tu candado personal en el interruptor.',
+  fuente: F.bloquear, tipo: 'candado', resaltar: [CAND.g], trampas: [TRAMPA, trampaVolante, trampaCarga],
+  alTocar: () => { CAND.colocar(TB.punto[0], TB.punto[1], TB.punto[2]); W.bien('Candado colocado.', N04); W.siguiente(); } });
+
+const pasoEtiquetar = pasoTocar(W, { titulo: 'Coloca la tarjeta', texto: 'Identifica quién bloqueó y por qué.',
+  fuente: F.etiquetar, tipo: 'tarjeta', resaltar: [TARJ.g], trampas: [TRAMPA, trampaVolante, trampaCarga],
+  alTocar: () => { TARJ.colocar(TB.punto[0] + 0.12, TB.punto[1] - 0.05, TB.punto[2]); W.bien('Tarjeta colocada.', N04); W.siguiente(); } });
+
+// El paso clave: el volante sigue girando. Tocarlo antes de que se detenga es error crítico.
+const pasoVolante = pasoTocar(W, { titulo: 'Espera a que el volante se detenga', texto: 'La energía ya está cortada y bloqueada, pero el volante conserva su inercia. <b>No lo toques hasta que pare.</b>',
+  fuente: F.disiparOtras, tipo: 'volante', resaltar: [rotV], puntos: 10,
+  trampas: [TRAMPA, trampaCarga],
+  alIniciar: () => { VO.detener(); },
+  alTocar: () => {
+    if (VO.girando()) { W.mal(trampaVolante.txt, trampaVolante.f, true); return; }
+    W.bien('El volante se detuvo por completo: ya no hay movimiento posible por inercia.', N04); W.siguiente(); } });
+
+const pasoCarga = { titulo: 'Controla la carga elevada', texto: 'Falta la energía gravitacional. Decide qué hacer con la carga.', fuente: F.disiparOtras, puntos: 10,
+  iniciar() { W.resaltar([CG.bloque]);
+    decidir(W, '⬇️ ¿Qué haces con la carga elevada?', [
+      { t: 'Bajarla hasta su posición de reposo, o apuntalarla con un soporte mecánico', ok: true, fb: 'La energía gravitacional se controla bajando la carga o soportándola.', f: N04 },
+      { t: 'Dejarla arriba: el mecanismo la sostiene y el equipo ya está bloqueado', ok: false, crit: true, fb: 'El bloqueo eléctrico no sostiene la carga. Si el mecanismo cede, cae.', f: N04 },
+      { t: 'Poner una tarjeta de NO OPERAR en el mando de subida y bajada', ok: false, crit: true, fb: 'Otra vez la etiqueta como control: no cambia nada de la carga suspendida.', f: N04 },
+    ], async () => { await CG.bajar(); await CG.apuntalar(); W.siguiente(); }); } };
+
+const pasoResorte = { titulo: 'Controla el resorte', texto: 'Queda el resorte de retorno, en tensión.', fuente: F.disiparOtras, puntos: 10,
+  iniciar() { W.resaltar(rsEspiras);
+    decidir(W, '🪤 ¿Qué haces con el resorte en tensión?', [
+      { t: 'Liberar su energía de forma controlada, o retenerlo con un dispositivo diseñado para eso', ok: true, fb: 'Liberar o contener: nunca dejarlo cargado a la espera.', f: N04 },
+      { t: 'Cortar el amarre para que se destense de una vez', ok: false, crit: true, fb: 'Se suelta de golpe y proyecta piezas: eso es exactamente el accidente que se quiere evitar.', f: N04 },
+      { t: 'Dejarlo así: un resorte no es una fuente de energía', ok: false, crit: true, fb: 'Es energía almacenada, de las más olvidadas del procedimiento.', f: N04 },
+    ], async () => { await W.animar(900, k => rsEspiras.forEach((e, i) => { e.position.y = -0.1 + i * (0.045 + 0.02 * k); }));
+      W.siguiente(); }); } };
+
+const pasoArranque = pasoTocar(W, { titulo: 'Intento de arranque', texto: 'Confirma apretando el arranque: nada debe moverse.',
+  fuente: F.arranque, tipo: 'arranque', resaltar: [EQ.arranque], trampas: [TRAMPA],
+  alTocar: () => { W.globo('Nada se mueve', EQ.g, 2200, 1.9); W.bien('Sin movimiento posible: condición segura confirmada.', PROC); W.siguiente(); } });
+
+const pasoAutorizar = { titulo: 'Autoriza la intervención', texto: 'Decide si se puede entrar al mantenimiento.', fuente: F.autorizar, puntos: 10,
+  iniciar() { W.resaltar([EQ.zona]);
+    decidir(W, '✅ ¿Se puede iniciar el mantenimiento?', [
+      { t: 'Sí: aislado y bloqueado, volante detenido, carga apoyada y resorte controlado', ok: true, fb: 'Se controlaron las cuatro energías, no solo la eléctrica.', f: PROC },
+      { t: 'Sí: con el candado en el tablero ya está todo controlado', ok: false, crit: true, fb: 'El candado no detiene la inercia, la gravedad ni un resorte.', f: N04 },
+      { t: 'Todavía no: falta avisar al departamento de compras', ok: false, fb: 'No es una condición del procedimiento.', f: PROC },
+    ], () => W.siguiente()); } };
+
+const pasoCierre = { titulo: 'Caso terminado', texto: 'Revisa lo que hiciste.', sinPuntos: true,
+  iniciar() { W.resaltar([]);
+    W.aviso(`<h2>⚙️ Celda mecánica terminada</h2>
+      <p>Esta celda es la que más se subestima: el candado en el tablero <b>no</b> detiene un volante que gira,
+      <b>no</b> baja una carga suspendida y <b>no</b> destensa un resorte.</p>
+      <p>Controlar la energía almacenada es parte del bloqueo, no un extra.</p>
+      <p class="ficticio">Fundamento verificado en el DOF (matriz normativa del curso, 22/10/2026). Lo señalado como buena práctica no es obligatorio en México; comprobar el instrumento antes y después se enseña sin numeral porque el de NFPA 70E sigue sin verificar.</p>`,
+      () => W.siguiente(), 'Ver resultado'); } };
+
+// P10: liberar y devolver al servicio. Sin esto el error crítico 6 del anexo no se podía alcanzar.
+const LIB = pasosLiberacion(W, { decidir, equipo: 'el transportador T-04', trampas: [TRAMPA],
+  tipoCandado: 'candado', resaltarCandado: [CAND.g], retirarCandado: () => CAND.colocar(MESA.x - 0.3, MESA.y, MESA.z),
+  tipoTarjeta: 'tarjeta', resaltarTarjeta: [TARJ.g], retirarTarjeta: () => TARJ.colocar(MESA.x, MESA.y + 0.08, MESA.z),
+  tipoDevolver: 'palanca', resaltarDevolver: [TB.mango], devolver: () => TB.cerrar() });
+
+W.inicio([{ id: 'practica', txt: '🧑‍🏫 <b>Práctica guiada:</b> el panel resalta en azul lo que toca' },
+  { id: 'evaluacion', txt: '📝 <b>Evaluación:</b> sin ayudas en pantalla; tú decides qué tocar' },
+  { id: 'demostracion', txt: '🎬 <b>Demostración:</b> para que la persona instructora muestre el caso' }],
+  sel => { setModo(sel); return senalesConsultables(W, [intro(W, `<h2>⚙️ Celda 3: Mecánico y energía almacenada</h2><p>Hay que intervenir el <b>transportador T-04</b>. Tiene volante de inercia, una carga elevada sostenida por su mecanismo y un resorte de retorno en tensión.</p>
+    <p>Corta y bloquea la energía… y después ocúpate de lo que <b>sigue teniendo energía aunque el tablero esté apagado</b>.</p>
+    <p>⛔ Acercarte al volante girando o meterte bajo la carga elevada son <b>errores críticos</b>.</p>`, FIC),
+    pasoFuentes, pasoAvisar, pasoParo, pasoEPP, pasoAislar, pasoBloquear, pasoEtiquetar, pasoVolante, pasoCarga,
+    pasoResorte, pasoArranque, pasoAutorizar, ...LIB, pasoCierre], SEN.volts); },
+  'Documento interno de capacitación: no es un DC-3 ni una certificación oficial. Fundamento verificado en el DOF: NOM-004-STPS-1999 (31/05/1999) y NOM-029-STPS-2011 (29/12/2011), vigentes; la Aclaración DOF 16/07/1999 no toca el 7.2.2 c) ni el Apéndice A. Lo marcado como buena práctica (OSHA 1910.147) NO es obligatorio en México. 🥽 En visor: botón VR.');
+
+if (location.search.includes('qa')) window.__qa = { MK, EQ, TB, VO, CG, RS, TR, CAND, TARJ, SEN, tocar: W.tocar, estado: W.qa };
+</script>
+</body>
+</html>

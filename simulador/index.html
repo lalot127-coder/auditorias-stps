@@ -65,6 +65,7 @@ button{font-family:inherit;cursor:pointer}.sec{background:var(--hielo);color:var
 <script src="motor/barco.js"></script>
 <script src="motor/sonido.js"></script>
 <script src="motor/realismo.js"></script>
+<script src="motor/vista1a.js"></script>
 <script type="importmap">{"imports":{"three":"./motor/vendor/three/build/three.module.js","three/addons/":"./motor/vendor/three/examples/jsm/"}}</script>
 </head>
 <body>
@@ -127,16 +128,16 @@ const AREAS = [
       { titulo: 'Los 5 momentos', icono: '🖐️', tipo: '3d', url: 'mundos/hospital/higiene_manos_5momentos/index.html' },
       { titulo: 'Lavado de manos correcto', icono: '🧼', tipo: '3d', url: 'mundos/hospital/higiene_manos_tecnica/index.html' },
       { titulo: 'Manos que salvan', icono: '🎮', tipo: 'juego', url: 'mundos/hospital/juegos/juego_higiene_manos.html' },
-      { titulo: '¿Camilla, silla o tabla?', icono: '🎮', tipo: 'juego', url: '../03_cursos/2026-10-06_formacion_camilleros/05_recursos_digitales/juego_decision_traslado.html' },
-      { titulo: 'Clasifica el RPBI', icono: '🎮', tipo: 'juego', url: '../03_cursos/2026-10-06_formacion_camilleros/05_recursos_digitales/juego_rpbi.html' },
+      { titulo: '¿Camilla, silla o tabla?', icono: '🎮', tipo: 'juego', url: 'juegos/juego_decision_traslado.html' },
+      { titulo: 'Clasifica el RPBI', icono: '🎮', tipo: 'juego', url: 'juegos/juego_rpbi.html' },
       { titulo: 'RCP y DEA: adulto y lactante', icono: '💓', tipo: '3d', url: 'mundos/hospital/rcp_dea/index.html' },
-      { titulo: 'Ritmo y profundidad (RCP por edad)', icono: '🎮', tipo: 'juego', url: '../03_cursos/BASE_primeros_auxilios_5h/05_recursos_digitales/juego_rcp_ritmo_profundidad.html' },
+      { titulo: 'Ritmo y profundidad (RCP por edad)', icono: '🎮', tipo: 'juego', url: 'juegos/juego_rcp_ritmo_profundidad.html' },
       { titulo: 'Atragantamiento y hemorragia', icono: '🚨', tipo: '3d', url: 'mundos/hospital/atragantamiento_hemorragia/index.html' },
-      { titulo: '¡Se está atragantando!', icono: '😮‍💨', tipo: 'juego', url: '../03_cursos/BASE_primeros_auxilios_5h/05_recursos_digitales/juego_atragantamiento.html' },
-      { titulo: 'Escape room: Emergencia en la plaza', icono: '🔐', tipo: 'juego', url: '../03_cursos/BASE_primeros_auxilios_5h/05_recursos_digitales/juego_escape_room.html' },
-      { titulo: 'Memorama: sí se hace / no se hace', icono: '🧩', tipo: 'juego', url: '../03_cursos/BASE_primeros_auxilios_5h/05_recursos_digitales/juego_memorama_si_no.html' },
-      { titulo: 'Maratón de primeros auxilios', icono: '🏁', tipo: 'juego', url: '../03_cursos/BASE_primeros_auxilios_5h/05_recursos_digitales/juego_maraton_equipos.html' },
-      { titulo: '¿Qué lleva mi botiquín?', icono: '🧰', tipo: 'juego', url: '../03_cursos/BASE_primeros_auxilios_5h/05_recursos_digitales/juego_botiquin.html' },
+      { titulo: '¡Se está atragantando!', icono: '😮‍💨', tipo: 'juego', url: 'juegos/juego_atragantamiento.html' },
+      { titulo: 'Escape room: Emergencia en la plaza', icono: '🔐', tipo: 'juego', url: 'juegos/juego_escape_room.html' },
+      { titulo: 'Memorama: sí se hace / no se hace', icono: '🧩', tipo: 'juego', url: 'juegos/juego_memorama_si_no.html' },
+      { titulo: 'Maratón de primeros auxilios', icono: '🏁', tipo: 'juego', url: 'juegos/BASE_primeros_auxilios_5h__juego_maraton_equipos.html' },
+      { titulo: '¿Qué lleva mi botiquín?', icono: '🧰', tipo: 'juego', url: 'juegos/juego_botiquin.html' },
       { titulo: 'RPBI 3D: ruta de recolección', icono: '♻️', tipo: '3d', estado: 'pronto' },
       { titulo: 'Primeros auxilios: equipo y botiquín', icono: '⛑️', tipo: 'sala', url: 'mundos/modulos/index.html?m=primeros-auxilios', nom: 'NOM-030-STPS-2009 · LFT 504', color: 'verde', senal: 'primeros' },
       { titulo: 'Radiaciones ionizantes', icono: '☢️', tipo: '3d', estado: 'pendiente', nom: 'NOM-012-STPS', color: 'amarillo' },
@@ -147,20 +148,20 @@ const AREAS = [
       { titulo: 'Riesgo 2: ¿Es riesgo o no?', icono: '⚠️', tipo: '3d', url: 'mundos/industria/riesgo_es_riesgo/index.html' },
       { titulo: 'Riesgo 3: Mitigación (controles)', icono: '🛡️', tipo: '3d', url: 'mundos/industria/riesgo_mitigacion/index.html' },
       { titulo: 'Análisis de riesgo del edificio', icono: '🔎', tipo: '3d', url: 'mundos/riesgo/analisis/index.html?e=industria' },
-      { titulo: '¿Es riesgo o no? (juego)', icono: '🎮', tipo: 'juego', url: '../03_cursos/BASE_analisis_de_riesgo_5h/05_recursos_digitales/juego_riesgo_o_no.html' },
-      { titulo: 'Calcula el riesgo: matriz NOM-031', icono: '🧮', tipo: 'juego', url: '../03_cursos/BASE_analisis_de_riesgo_5h/05_recursos_digitales/juego_matriz_nom031.html' },
-      { titulo: 'Ordena los controles', icono: '🪜', tipo: 'juego', url: '../03_cursos/BASE_analisis_de_riesgo_5h/05_recursos_digitales/juego_ordena_controles.html' },
-      { titulo: '¿Qué método uso?', icono: '🧭', tipo: 'juego', url: '../03_cursos/BASE_analisis_de_riesgo_5h/05_recursos_digitales/juego_que_metodo.html' },
-      { titulo: 'Maratón de análisis de riesgo', icono: '🏁', tipo: 'juego', url: '../03_cursos/BASE_analisis_de_riesgo_5h/05_recursos_digitales/juego_maraton_equipos.html' },
+      { titulo: '¿Es riesgo o no? (juego)', icono: '🎮', tipo: 'juego', url: 'juegos/juego_riesgo_o_no.html' },
+      { titulo: 'Calcula el riesgo: matriz NOM-031', icono: '🧮', tipo: 'juego', url: 'juegos/juego_matriz_nom031.html' },
+      { titulo: 'Ordena los controles', icono: '🪜', tipo: 'juego', url: 'juegos/juego_ordena_controles.html' },
+      { titulo: '¿Qué método uso?', icono: '🧭', tipo: 'juego', url: 'juegos/juego_que_metodo.html' },
+      { titulo: 'Maratón de análisis de riesgo', icono: '🏁', tipo: 'juego', url: 'juegos/juego_maraton_equipos.html' },
       { titulo: 'Trabajos en alturas', icono: '🪜', tipo: 'sala', url: 'mundos/modulos/index.html?m=alturas', nom: 'NOM-009-STPS-2011', color: 'amarillo', senal: 'caida' },
       { titulo: 'Alturas 6: Escalera y plataforma de elevación', icono: '🛗', tipo: '3d', url: 'mundos/industria/alturas_escalera_plataforma/index.html', nom: 'NOM-009-STPS-2011', color: 'azul', senal: 'caida' },
       { titulo: 'Alturas 7: Autorización por escrito', icono: '📝', tipo: '3d', url: 'mundos/industria/alturas_autorizacion/index.html', nom: 'NOM-009-STPS-2011', color: 'azul', senal: 'informacion' },
       { titulo: 'Enfermería 1: Consultorio de la planta', icono: '🩺', tipo: '3d', url: 'mundos/industria/consultorio_planta/index.html', nom: 'LFT 504 · RFSST 49-50', color: 'verde', senal: 'primeros' },
       { titulo: 'Enfermería 2: Normas de salud STPS', icono: '🏭', tipo: '3d', url: 'mundos/industria/normas_salud/index.html', nom: '10 NOM de salud STPS', color: 'azul', senal: 'informacion' },
-      { titulo: '¿Qué NOM de salud aplica?', icono: '🧭', tipo: 'juego', url: '../03_cursos/2026-11-19_enfermeria_ocupacional_ut_oriental/05_recursos_digitales/juego_ei_que_nom.html' },
-      { titulo: 'Memorama de vigilancia de la salud', icono: '🧩', tipo: 'juego', url: '../03_cursos/2026-11-19_enfermeria_ocupacional_ut_oriental/05_recursos_digitales/juego_ei_memorama_vigilancia.html' },
-      { titulo: 'Enfermería ocupacional: ¿mito o realidad?', icono: '💬', tipo: 'juego', url: '../03_cursos/2026-11-19_enfermeria_ocupacional_ut_oriental/05_recursos_digitales/juego_ei_mito_realidad.html' },
-      { titulo: 'Maratón de enfermería ocupacional', icono: '🏁', tipo: 'juego', url: '../03_cursos/2026-11-19_enfermeria_ocupacional_ut_oriental/05_recursos_digitales/juego_ei_maraton.html' },
+      { titulo: '¿Qué NOM de salud aplica?', icono: '🧭', tipo: 'juego', url: 'juegos/juego_ei_que_nom.html' },
+      { titulo: 'Memorama de vigilancia de la salud', icono: '🧩', tipo: 'juego', url: 'juegos/juego_ei_memorama_vigilancia.html' },
+      { titulo: 'Enfermería ocupacional: ¿mito o realidad?', icono: '💬', tipo: 'juego', url: 'juegos/juego_ei_mito_realidad.html' },
+      { titulo: 'Maratón de enfermería ocupacional', icono: '🏁', tipo: 'juego', url: 'juegos/juego_ei_maraton.html' },
       { titulo: 'Espacios confinados', icono: '🕳️', tipo: 'sala', url: 'mundos/modulos/index.html?m=espacios-confinados', nom: 'NOM-033-STPS-2015', color: 'amarillo', senal: 'prec_general' },
       { titulo: 'Seguridad eléctrica', icono: '⚡', tipo: 'sala', url: 'mundos/modulos/index.html?m=seguridad-electrica', nom: 'NOM-029-STPS-2011', color: 'amarillo', senal: 'electrico' },
       { titulo: 'Bloqueo y etiquetado (LOTO)', icono: '🔒', tipo: 'sala', url: 'mundos/modulos/index.html?m=loto', nom: 'NOM-004-STPS-1999 · NOM-029-STPS-2011', color: 'azul', senal: 'guantes' },
@@ -193,24 +194,24 @@ const AREAS = [
       { titulo: 'Análisis de riesgo del edificio', icono: '🔎', tipo: '3d', url: 'mundos/riesgo/analisis/index.html?e=laboral' },
       { titulo: 'Recepción del inspector', icono: '🛎️', tipo: '3d', url: 'mundos/laboral/recepcion_inspector/index.html' },
       { titulo: 'La visita de inspección', icono: '📋', tipo: '3d', url: 'mundos/laboral/visita_inspeccion/index.html' },
-      { titulo: 'Día D: ¿lo haces o no?', icono: '🎮', tipo: 'juego', url: '../03_cursos/BASE_auditorias_stps_2h/05_recursos_digitales/juego_dia_d.html' },
+      { titulo: 'Día D: ¿lo haces o no?', icono: '🎮', tipo: 'juego', url: 'juegos/juego_dia_d.html' },
       { titulo: 'NOM-035: Detecta los factores de riesgo', icono: '🧭', tipo: '3d', url: 'mundos/laboral/nom035_factores/index.html' },
       { titulo: 'NOM-035: Acontecimiento traumático severo', icono: '🚨', tipo: '3d', url: 'mundos/laboral/nom035_ats/index.html' },
       { titulo: 'NOM-035: Construye un entorno favorable', icono: '🌱', tipo: '3d', url: 'mundos/laboral/nom035_entorno/index.html' },
       { titulo: 'NOM-035: Requisitos y multas', icono: '⚖️', tipo: '3d', url: 'mundos/laboral/nom035_requisitos/index.html' },
-      { titulo: '¿Es factor de riesgo?', icono: '🧠', tipo: 'juego', url: '../03_cursos/BASE_nom035_trabajadores_4h/05_recursos_digitales/juego_riesgo_o_no.html' },
-      { titulo: '¿Violencia laboral? ¿Qué hago?', icono: '🛑', tipo: 'juego', url: '../03_cursos/BASE_nom035_trabajadores_4h/05_recursos_digitales/juego_violencia_que_hago.html' },
-      { titulo: 'Escape room: la oficina en calma', icono: '🔐', tipo: 'juego', url: '../03_cursos/BASE_nom035_trabajadores_4h/05_recursos_digitales/juego_escape_oficina.html' },
-      { titulo: 'Memorama: factor y medida', icono: '🧩', tipo: 'juego', url: '../03_cursos/BASE_nom035_trabajadores_4h/05_recursos_digitales/juego_memorama_factor_medida.html' },
-      { titulo: '¿Qué me toca según mi tamaño?', icono: '🏢', tipo: 'juego', url: '../03_cursos/BASE_nom035_directivos_4h/05_recursos_digitales/juego_que_me_toca.html' },
-      { titulo: 'Maratón NOM-035', icono: '🏁', tipo: 'juego', url: '../03_cursos/BASE_nom035_directivos_4h/05_recursos_digitales/juego_maraton_equipos.html' },
+      { titulo: '¿Es factor de riesgo?', icono: '🧠', tipo: 'juego', url: 'juegos/BASE_nom035_trabajadores_4h__juego_riesgo_o_no.html' },
+      { titulo: '¿Violencia laboral? ¿Qué hago?', icono: '🛑', tipo: 'juego', url: 'juegos/juego_violencia_que_hago.html' },
+      { titulo: 'Escape room: la oficina en calma', icono: '🔐', tipo: 'juego', url: 'juegos/juego_escape_oficina.html' },
+      { titulo: 'Memorama: factor y medida', icono: '🧩', tipo: 'juego', url: 'juegos/juego_memorama_factor_medida.html' },
+      { titulo: '¿Qué me toca según mi tamaño?', icono: '🏢', tipo: 'juego', url: 'juegos/juego_que_me_toca.html' },
+      { titulo: 'Maratón NOM-035', icono: '🏁', tipo: 'juego', url: 'juegos/BASE_nom035_directivos_4h__juego_maraton_equipos.html' },
     ] },
   { id: 'empresa', nombre: 'Empresa · RH', icono: '🏢', color: 0x14284B, ang: 260, desc: 'Jornada laboral de 40 horas: auditoría, horarios y cumplimiento', senales: ['salida', 'no_fumar'],
     modulos: [
       { titulo: 'Análisis de riesgo del edificio', icono: '🔎', tipo: '3d', url: 'mundos/riesgo/analisis/index.html?e=empresa' },
       { titulo: 'Oficina de RH: auditoría del checador', icono: '⏱️', tipo: '3d', url: 'mundos/empresa/rh_checador/index.html' },
       { titulo: 'Mesa de ayuda: preguntas sobre horarios', icono: '❓', tipo: '3d', url: 'mundos/empresa/horarios_qa/index.html' },
-      { titulo: '¿Cumple o no cumple?', icono: '🎮', tipo: 'juego', url: '../03_cursos/BASE_jornada_40_horas_2h/05_recursos_digitales/juego_cumple_o_no.html' },
+      { titulo: '¿Cumple o no cumple?', icono: '🎮', tipo: 'juego', url: 'juegos/juego_cumple_o_no.html' },
       { titulo: 'Aula: Nueva Jornada Laboral (curso narrado)', icono: '🎓', tipo: '3d', url: 'mundos/empresa/aula_jornada40/index.html' },
       { titulo: 'Edificios, locales e instalaciones', icono: '🏢', tipo: '3d', estado: 'pendiente', nom: 'NOM-001-STPS', color: 'amarillo' },
       { titulo: 'Equipo de protección personal', icono: '🦺', tipo: '3d', estado: 'pendiente', nom: 'NOM-017-STPS-2024', color: 'azul', senal: 'casco' },
@@ -225,11 +226,49 @@ const AREAS = [
       { titulo: 'Análisis de riesgo del edificio', icono: '🔎', tipo: '3d', url: 'mundos/riesgo/analisis/index.html?e=biblioteca' },
       { titulo: 'Sala de lectura', icono: '📖', tipo: '3d', url: 'mundos/biblioteca/index.html' },
       { titulo: 'Reto: encuentra la norma', icono: '🔎', tipo: '3d', url: 'mundos/biblioteca/index.html?reto' },
+      // (03/11/2026) Tres puertas de material multimedia, por decisión de Carlos.
+      //
+      // LIBROS INTERACTIVOS: la liga va DIRECTA al .html del curso, con la forma '../03_cursos/...'.
+      // Tiene que ser así: publicar_simulador.py solo busca ese patrón en index.html y en
+      // motor/zonas.js, y es lo que copia el libro a juegos/ al publicar. Un libro ligado desde
+      // otra página (una repisa, por ejemplo) NO se copiaría y la puerta daría 404 en el campus.
+      // Cuando haya un segundo libro: se agrega aquí su propia liga '../03_cursos/...' para que se
+      // publique, y entonces sí conviene una página-repisa que las agrupe.
+      //
+      // VIDEOS y PRESENTACIONES: esas dos páginas solo guardan ENLACES a YouTube, así que viven
+      // dentro de mundos/ y se publican con el simulador, sin depender del copiado de juegos/.
+      // Ningún MP4 entra aquí: 04_simulador se publica entero en GitHub.
+      { titulo: 'Libro interactivo: LOTO', icono: '📘', tipo: 'doc', url: 'juegos/libro3d_loto.html', nom: 'NOM-004-STPS-1999 · NOM-029-STPS-2011', color: 'azul' },
+      { titulo: 'Videos explicativos', icono: '🎬', tipo: 'doc', url: 'mundos/biblioteca/videos.html' },
+      { titulo: 'Presentaciones narradas', icono: '🎙️', tipo: 'doc', url: 'mundos/biblioteca/presentaciones.html' },
+    ] },
+  // Edificio LOTO (21/10/2026): aula y tres celdas de simulación, con el motor de pasos del campus (mundos/loto/).
+  // Cada celda evalúa de verdad: pasos, errores menores y ERRORES CRÍTICOS que impiden aprobar (meter la mano al
+  // equipo, acercarse al volante girando, tratar la etiqueta como bloqueo). Piezas comunes en mundos/loto/comun.js.
+  // Numerales VERIFICADOS el 22/10/2026 contra el DOF: matriz normativa del curso BASE_loto_bloqueo_etiquetado_8h
+  // (01_diseno/MATRIZ_NORMATIVA_LOTO.md). Lo que ahí sigue sin verificar NO se escribe en el simulador.
+  // (03/11/2026) Renombrado a «Aula Interactiva» por decisión de Carlos: aquí se van a alojar las
+  // prácticas inmersivas de cada curso para el Meta Quest 3S, manejadas con las manos. LOTO se queda
+  // como está y es la primera; las demás se agregan a esta misma lista conforme existan.
+  // EL id SIGUE SIENDO 'loto' A PROPÓSITO: lo usan el análisis de riesgo (?e=loto), los permisos de
+  // acceso.js, SENAL_AREA, PISO_AREA y NOM_EDIFICIO. Cambiarlo rompe esas cinco cosas; el nombre que
+  // ve el participante es `nombre`, y es lo único que hay que cambiar.
+  { id: 'loto', nombre: 'Aula Interactiva', icono: '🥽', color: 0xB7791F, ang: 20, senales: ['salida', 'electrico', 'guantes'],
+    desc: 'Prácticas inmersivas por curso para visor (Meta Quest 3S), que se manejan con las manos. Hoy: control de energías peligrosas (LOTO) con aula y tres celdas de simulación —eléctrica, neumática e hidráulica, y mecánica con energía almacenada—',
+    modulos: [
+      { titulo: 'Análisis de riesgo del edificio', icono: '🔎', tipo: '3d', url: 'mundos/riesgo/analisis/index.html?e=loto' },
+      { titulo: 'Aula: energías y dispositivos', icono: '🎓', tipo: '3d', url: 'mundos/loto/aula/index.html', nom: 'NOM-004-STPS-1999 · NOM-029-STPS-2011', color: 'azul', senal: 'informacion' },
+      { titulo: 'Celda 1: Aislamiento eléctrico', icono: '⚡', tipo: '3d', url: 'mundos/loto/electrica/index.html', nom: 'NOM-029-STPS-2011, 8.1 a) y 9.4 d) 2)', color: 'amarillo', senal: 'electrico' },
+      { titulo: 'Celda 2: Neumático e hidráulico', icono: '🫧', tipo: '3d', url: 'mundos/loto/neumatica_hidraulica/index.html', nom: 'NOM-004-STPS-1999, 7.2.2 c)', color: 'amarillo', senal: 'guantes' },
+      { titulo: 'Celda 3: Mecánico y energía almacenada', icono: '⚙️', tipo: '3d', url: 'mundos/loto/mecanica/index.html', nom: 'NOM-004-STPS-1999, 7.2.2 c)', color: 'amarillo', senal: 'prec_general' },
+      { titulo: 'Examen y constancia con folio', icono: '📄', tipo: '3d', estado: 'pronto', nom: 'Fase 3 del proyecto', color: 'azul' },
+      { titulo: 'Bloqueo grupal y cambio de turno', icono: '👥', tipo: '3d', estado: 'pendiente', nom: 'Fuera de la versión 1', color: 'azul' },
     ] },
 ];
 // Práctica de cada edificio (14/10/2026): recorrido, peligros, inspección, emergencia y análisis (mundos/practicas/zona, datos_edificios.js).
 const NOM_EDIFICIO = { hospital: 'NOM-045-SSA2-2005 · NOM-002-STPS-2010', industria: 'NOM-004 · NOM-027 · NOM-029-STPS', proteccion: 'NOM-002-STPS-2010 · NOM-003-SEGOB-2011',
-  laboral: 'NOM-035-STPS-2018', empresa: 'NOM-001 · NOM-036-1-STPS · AHA 2025', cafeteria: 'NOM-002-STPS-2010 (clase K) · NOM-001-STPS', biblioteca: 'NOM-001-STPS · LGPC (sismo)' };
+  laboral: 'NOM-035-STPS-2018', empresa: 'NOM-001 · NOM-036-1-STPS · AHA 2025', cafeteria: 'NOM-002-STPS-2010 (clase K) · NOM-001-STPS', biblioteca: 'NOM-001-STPS · LGPC (sismo)',
+  loto: 'NOM-004-STPS-1999 · NOM-029-STPS-2011' };
 AREAS.forEach(a => { if (!NOM_EDIFICIO[a.id]) return; const i = a.modulos.findIndex(m => /^Análisis de riesgo/.test(m.titulo));
   a.modulos.splice(i + 1, 0, { titulo: 'Práctica del edificio: recorrido, peligros, inspección y emergencia', icono: '🎯', nom: NOM_EDIFICIO[a.id], tipo: '3d', url: `mundos/practicas/zona/index.html?z=${a.id}`, puerta: 'practicas/zona', color: 'amarillo', senal: 'prec_general' }); });
 const POR_PISO = 4, ANCHO_PUERTA = 1.15, PASO_PUERTA = 1.75, ALTO_PISO = 2.7;
@@ -407,8 +446,8 @@ totemBanner(4.6, 20.4, -0.35, 4.6);
 // Desde 05/10/2026 cada edificio tiene una entrada principal: el avatar entra físicamente a un interior caminable
 // (motor/interior.js) con las puertas de sus módulos. Agregar puertas: sigue siendo en "modulos" de AREAS.
 const ED = {}; const ANCHO_ED = 9, ALTO_ED = 6.4;
-const SENAL_AREA = { hospital: 'primeros', proteccion: 'extintor', industria: 'casco', laboral: 'informacion', empresa: 'informacion', cafeteria: 'informacion', biblioteca: 'informacion' };
-const PISO_AREA = { industria: 'concreto', proteccion: 'placa_metal', biblioteca: 'tablones', cafeteria: 'tablones', laboral: 'concreto', empresa: 'concreto', hospital: 'concreto' };
+const SENAL_AREA = { hospital: 'primeros', proteccion: 'extintor', industria: 'casco', laboral: 'informacion', empresa: 'informacion', cafeteria: 'informacion', biblioteca: 'informacion', loto: 'electrico' };
+const PISO_AREA = { industria: 'concreto', proteccion: 'placa_metal', biblioteca: 'tablones', cafeteria: 'tablones', laboral: 'concreto', empresa: 'concreto', hospital: 'concreto', loto: 'placa_metal' };
 AREAS.forEach(a => a.modulos.forEach(m => m.puerta = Acceso.idPuerta(a.id, m.url || '')));
 AREAS.forEach(a => {
   const ancho = ANCHO_ED, alto = ALTO_ED, pos = polar(a.ang, R_EDIF), hex = '#' + a.color.toString(16).padStart(6, '0');
@@ -611,7 +650,22 @@ const xr = crearXR({ THREE, renderer, camera, controls, contenedor: $('#barra .d
   alTeletransportar: p => { if (navAct().libre(p.x, p.z)) { levantar(); ruta = []; alLlegar = null; yo.position.set(p.x, 0, p.z); xr.colocar(p); } },
   libre: (x, z) => navAct().libre(x, z),
   alBoton: b => { if (b === 'menu') menuVR(); else if (b === 'atras') atras(); },
-  alCambiar: activo => { ruta = []; alLlegar = null; marca.visible = false; if (activo) aviso('VR: joystick izq. para caminar · A/X = menú · B/Y = atrás'); } });
+  alCambiar: activo => { ruta = []; alLlegar = null; marca.visible = false;
+    if (activo && v1a.activa()) v1a.desactivar();   // en el visor manda la realidad virtual
+    if (activo && pr.activo) {   // la pantalla de inicio (HTML) no se ve en el visor: se entra con el avatar guardado
+      perfil = ed.perfil(); if (!String(perfil.nombre || '').trim()) perfil.nombre = 'Participante'; Avatar.guardar(perfil); vestir();
+      $('#inicio').style.display = 'none'; pr.activo = false; try { sessionStorage.setItem('campus_entro', '1'); } catch (e) { } }
+    if (activo) aviso('VR: joystick izq. para caminar · A/X = menú · B/Y = atrás · manos: botón ☰ en la muñeca'); } });
+
+// ---------------------------------------------------------------------------- VISTA EN PRIMERA PERSONA (21/10/2026)
+// A la altura de los ojos y girando la vista con el movimiento del celular (motor/vista1a.js). El botón 🧍 vive junto a
+// los demás de la barra. En el visor no aplica: ahí manda la realidad virtual.
+const v1a = Vista1a.crear({
+  THREE, camera, controls, renderer, barra: $('#barra .der'), yo: () => yo,
+  libre: (x, z) => navAct().libre(x, z),
+  bloqueado: () => $('#inicio').style.display === 'block' || $('#modal').style.display === 'flex',
+  alCambiar: activa => { ruta = []; alLlegar = null; marca.visible = false; if (activa) { levantar(); $('#ayuda').style.display = 'none'; aviso('👁️ Gira moviendo el celular · camina con las flechas'); } else colocarCamara(); }
+});
 
 // ============================================================================ MULTIJUGADOR (servidor de aula en el mismo wifi)
 // Funciona cuando el campus se abre desde `python 05_herramientas/servidor_aula.py <curso>`: cada celular envía su
@@ -716,28 +770,28 @@ const reloj = new THREE.Clock(); const prev = new THREE.Vector3(); window.__fps 
 let dtForzado = null;   // solo modo de prueba (?qa): avanzar el ciclo aunque la pestaña esté oculta
 function cuadro() {
   const dt = dtForzado ?? Math.min(0.05, reloj.getDelta()), ahora = performance.now() + (dtForzado ? (cuadro.extra = (cuadro.extra || 0) + dtForzado * 1000) : (cuadro.extra || 0)), t = reloj.elapsedTime;
-  if (pr.activo) { if (pr.g) pr.g.rotation.y = t * 0.6; pr.r.render(pr.s, pr.c); return; }
+  if (pr.activo && !xr.activo()) { if (pr.g) pr.g.rotation.y = t * 0.6; pr.r.render(pr.s, pr.c); return; }   // en VR siempre se dibuja el campus (si no, el visor se quedaba congelado)
   nCuadros++; tFps += dt; if (tFps > 1) { window.__fps = Math.round(nCuadros / tFps); nCuadros = 0; tFps = 0; }
   for (let i = tweens.length - 1; i >= 0; i--) { const tw = tweens[i]; const k = Math.min(1, (ahora - tw.t0) / tw.ms); const ee = k < .5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2;
     tw.v.lerpVectors(tw.de, tw.a, ee); if (k >= 1) { tweens.splice(i, 1); tw.res(); } }
-  prev.copy(yo.position); const nav = navAct(), vr = xr.activo();
+  prev.copy(yo.position); const nav = navAct(), vr = xr.activo(), p1 = v1a.activa();   // p1: vista a la altura de los ojos
   // teclado (computadora): avanza si la celda está libre; si choca, se desliza por el eje que sí está libre
-  if (teclas.size && !vr) { const f = new THREE.Vector3(); camera.getWorldDirection(f); f.y = 0; f.normalize(); const r = new THREE.Vector3(-f.z, 0, f.x); const d = new THREE.Vector3();
+  if (teclas.size && !vr && !p1) { const f = new THREE.Vector3(); camera.getWorldDirection(f); f.y = 0; f.normalize(); const r = new THREE.Vector3(-f.z, 0, f.x); const d = new THREE.Vector3();
     if (teclas.has('w') || teclas.has('arrowup')) d.add(f); if (teclas.has('s') || teclas.has('arrowdown')) d.sub(f);
     if (teclas.has('d') || teclas.has('arrowright')) d.add(r); if (teclas.has('a') || teclas.has('arrowleft')) d.sub(r);
     if (d.lengthSq()) { ruta = []; marca.visible = false; levantar(); $('#ayuda').style.display = 'none'; d.normalize(); const paso = (dentro ? 3.6 : 4.5) * dt, x = yo.position.x + d.x * paso, z = yo.position.z + d.z * paso;
       if (nav.libre(x, z)) yo.position.set(x, 0, z); else if (nav.libre(x, yo.position.z)) yo.position.x = x; else if (nav.libre(yo.position.x, z)) yo.position.z = z;
       yo.rotation.y = Math.atan2(d.x, d.z); } }
   // seguir la ruta calculada (A*)
-  if (ruta.length && !vr) { const m = ruta[0], dx = m.x - yo.position.x, dz = m.z - yo.position.z, L = Math.hypot(dx, dz);
+  if (ruta.length && !vr && !p1) { const m = ruta[0], dx = m.x - yo.position.x, dz = m.z - yo.position.z, L = Math.hypot(dx, dz);
     if (L < 0.08) { ruta.shift(); if (!ruta.length) { marca.visible = false; const cb = alLlegar; alLlegar = null; cb && cb(); } }
     else { const s = Math.min(L, (dentro ? 3.6 : 5) * dt); yo.position.x += dx / L * s; yo.position.z += dz / L * s; yo.rotation.y = Math.atan2(dx, dz); } }
-  if (vr) xr.actualizar();
+  if (vr) xr.actualizar(); else if (p1) v1a.actualizar(dt);
   const andando = yo.position.distanceToSquared(prev) > 1e-6; fase += andando ? dt * 10 : 0; animYo(fase, andando, pose); if (window.Sonido) Sonido.andar(andando && pose !== 'sentado');
   const lugar = dentro || 'plaza';
   OTROS.forEach(o => { if (!o.meta) return; const d = o.meta.clone().sub(o.g.position); const mov = d.length() > 0.02; o.g.position.lerp(o.meta, Math.min(1, dt * 6)); o.g.rotation.y = o.ry;
     o.g.visible = o.lugar === lugar; if (o.g.visible && o.g.parent !== escena) escena.add(o.g); o.fase += mov ? dt * 10 : 0; o.animar(o.fase, mov); });
-  if (camModo === 'seguir' && !vr) { const delta = yo.position.clone().sub(prev); delta.y = 0; camera.position.add(delta); controls.target.add(delta); }
+  if (camModo === 'seguir' && !vr && !p1) { const delta = yo.position.clone().sub(prev); delta.y = 0; camera.position.add(delta); controls.target.add(delta); }
   if (I) I.actualizar(dt, vr ? null : camera, yo); else Z.actualizar(dt, yo.position);
   if (!I) { for (let i = 0; i < gotas; i++) { const k = (gfase[i] + t * 0.55) % 1, r = k * 2.4, a = gdir[i]; gp[i * 3] = Math.cos(a) * r; gp[i * 3 + 1] = 1.4 * k - 3.2 * k * k * 1.5 + 0.2; gp[i * 3 + 2] = Math.sin(a) * r; }
     gGeo.attributes.position.needsUpdate = true; escultura.rotation.y = t * 0.35; }
@@ -746,6 +800,8 @@ function cuadro() {
   if (!vr) controls.update(); renderer.render(escena, camera); actualizarEtiquetas();
 }
 renderer.setAnimationLoop(cuadro);
+// otra pestaña tomó la sesión o el celular pausó esta (motor/acceso.js): se detiene todo para no saturar el dispositivo
+addEventListener('campus-liberado', () => { renderer.setAnimationLoop(null); clearInterval(MP.timer); try { if (window.SalaLinea && SalaLinea.activa()) SalaLinea.salir(); } catch (e) { } });
 { const c = document.getElementById('cargando'); if (c) { c.dataset.ok = '1'; c.remove(); } }
 
 // ============================================================================ INICIO
